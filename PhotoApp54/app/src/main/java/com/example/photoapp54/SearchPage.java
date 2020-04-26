@@ -4,11 +4,30 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.text.Editable;
+import android.view.autofill.AutofillValue;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.RadioGroup;
+import android.widget.Button;
+import android.widget.RadioButton;
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
+import com.example.photoapp54.model.*;
 
-public class SearchPage extends Fragment {
+import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.ArrayList;
+
+public class SearchPage extends AppCompatActivity {
+    private TextInputLayout personTag;
+    private TextInputLayout locationTag;
+    private RadioGroup andOr;
+    private RadioButton radAnd;
+    private RadioButton radOr;
+    private ListView imageView;
+    private Button search;
+    private Button reset;
 
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
@@ -18,7 +37,133 @@ public class SearchPage extends Fragment {
         return inflater.inflate(R.layout.search, container, false);
     }
 
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.search);
+
+        andOr = findViewById(R.id.grp2Tag);
+        personTag = findViewById(R.id.txtPersonTag);
+        locationTag = findViewById(R.id.txtLocationTag);
+        radAnd = findViewById(R.id.btnAnd);
+        radOr = findViewById(R.id.btnOr);
+        imageView = findViewById(R.id.imageView);
+        search = findViewById(R.id.btnSearch);
+        reset = findViewById(R.id.btnReset);
+    }
+
+    private void search(View view) {
+        ArrayList<Album> temp = new ArrayList<>();
+        //Change above code to get user's albums;
+        ArrayList<Photo> resList = new ArrayList<>();
+
+        String strPerson = personTag.getEditText().getText().toString().trim();
+        String strLocation = locationTag.getEditText().getText().toString().trim();
+
+        if (radAnd.isSelected() || radOr.isSelected()) {
+            if (strPerson.isEmpty()) {
+                personTag.setError("Field can't be empty!");
+                return;
+            }
+            if (strLocation.isEmpty()) {
+                locationTag.setError("Field can't be empty!");
+                return;
+            }
+
+            if (!strPerson.isEmpty() && !strLocation.isEmpty()) {
+                personTag.setError(null);
+                locationTag.setError(null);
+                imageView.removeAllViewsInLayout();
+                resList = tagCheck(temp, strPerson, strLocation);
+            }
+        }
+        else {
+            if (strPerson.isEmpty() && strLocation.isEmpty()) {
+                personTag.setError("Both fields can't be empty!");
+                locationTag.setError("Both fields can't be empty!");
+                return;
+            }else {
+                personTag.setError(null);
+                locationTag.setError(null);
+                imageView.removeAllViewsInLayout();
+                resList = tagCheck(temp, strPerson, strLocation);
+            }
+        }
+
+        PhotoAdaptor photoAdaptor = new PhotoAdaptor(this, imageView.getId() , resList);
+        //CHANGE RESOURCEID!!!!!!!!!!!!!!!!
+
+        imageView.setAdapter(photoAdaptor);
+    }
+
+    private ArrayList<Photo> tagCheck(ArrayList<Album> albums, String pTag, String lTag) {
+        ArrayList<Photo> resList = new ArrayList<>();
+        for (int i = 0; i < albums.size(); i++) {
+            Album currAlbum = albums.get(i);
+
+            if (radAnd.isSelected()) {
+                boolean pFound = false;
+                boolean lFound = false;
+                Tag pTagTemp = new Tag("person", pTag, false);
+                Tag lTagTemp = new Tag("location", lTag, false);
+
+                for (int j = 0; j < currAlbum.getPictureList().size(); j++) {
+                    Photo currPhoto = currAlbum.getPictureList().get(i);
+
+                    for (int k = 0; k < currPhoto.getTags().size(); k++) {
+                        if (currPhoto.getTags().get(i).equals(pTagTemp))
+                            pFound = true;
+                        if (currPhoto.getTags().get(i).equals(lTagTemp))
+                            lFound = true;
+
+                        if (pFound && lFound) {
+                            resList.add(currPhoto);
+                            break;
+                        }
+                    }
+                }
+            }
+            else if (radOr.isSelected()) {
+                Tag pTagTemp = new Tag("person", pTag, false);
+                Tag lTagTemp = new Tag("location", lTag, false);
+
+                for (int j = 0; j < currAlbum.getPictureList().size(); j++) {
+                    Photo currPhoto = currAlbum.getPictureList().get(i);
+
+                    for (int k = 0; k < currPhoto.getTags().size(); k++) {
+                        if (currPhoto.getTags().get(i).equals(pTagTemp) || currPhoto.getTags().get(i).equals(lTagTemp)) {
+                            resList.add(currPhoto);
+                            break;
+                        }
+                    }
+                }
+            }
+            else {
+                Tag temp;
+                if (pTag.isEmpty())
+                    temp = new Tag("location", lTag, false);
+                else
+                    temp = new Tag("person", pTag, false);
+
+                for (int j = 0; j < currAlbum.getPictureList().size(); j++) {
+                    Photo currPhoto = currAlbum.getPictureList().get(i);
+
+                    for (int k = 0; k < currPhoto.getTags().size(); k++) {
+                        if (currPhoto.getTags().get(i).equals(temp)) {
+                            resList.add(currPhoto);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return resList;
+    }
+
+    private void reset(View view) {
+        personTag.getEditText().setText("");
+        locationTag.getEditText().setText("");
+        andOr.clearCheck();
+        imageView.removeAllViewsInLayout();
     }
 }
