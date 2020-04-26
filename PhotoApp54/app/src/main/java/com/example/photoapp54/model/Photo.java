@@ -19,10 +19,12 @@ public class Photo implements Serializable {
     }
 
     public String getPhotoName() {
+
         return photoName;
     }
 
     public Bitmap getBitmap() {
+
         return bitmap.getBitmap();
     }
 
@@ -40,8 +42,6 @@ public class Photo implements Serializable {
         }
 
         tagList.add(newTag);
-        Comparator<Tag> comparator = Comparator.comparing(Tag::toString);
-        tagList.sort(comparator);
     }
 
     public void removeTag(String name, String value) {
@@ -57,6 +57,7 @@ public class Photo implements Serializable {
     }
 
     public boolean equals(Photo other) {
+
         return this.photoName.equals(other.photoName);
     }
 }

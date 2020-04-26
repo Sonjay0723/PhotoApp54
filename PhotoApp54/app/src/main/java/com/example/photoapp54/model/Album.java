@@ -76,8 +76,6 @@ public class Album implements Serializable {
                 return;
         }
         pictureList.add(newPicture);
-        Comparator<Photo> comparator = Comparator.comparing(Photo::getPhotoName);
-        pictureList.sort(comparator);
     }
 
     /**

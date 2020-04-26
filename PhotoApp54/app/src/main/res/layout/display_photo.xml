@@ -8,30 +8,32 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="239dp"
-        android:layout_height="221dp"
-        android:layout_marginStart="120dp"
-        android:layout_marginTop="108dp"
+        android:layout_width="318dp"
+        android:layout_height="170dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="84dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_launcher_background" />
 
     <Button
-        android:id="@+id/next"
+        android:id="@+id/nextImg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
-        android:layout_marginTop="196dp"
+        android:layout_marginEnd="80dp"
+        android:layout_marginTop="264dp"
         android:text="Next"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/previous"
+        android:id="@+id/previousImg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="196dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="264dp"
         android:text="Previous"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -40,8 +42,8 @@
         android:id="@+id/textView"
         android:layout_width="219dp"
         android:layout_height="51dp"
-        android:layout_marginEnd="140dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginEnd="176dp"
+        android:layout_marginTop="16dp"
         android:text="Image Display"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         app:layout_constraintEnd_toEndOf="parent"
@@ -52,20 +54,32 @@
         android:layout_width="359dp"
         android:layout_height="283dp"
         android:layout_marginBottom="124dp"
-        android:layout_marginEnd="60dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginStart="30dp"
         android:background="#2196F3"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/addTag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="16dp"
         android:text="Add Tag"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/deleteTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="10dp"
+        android:text="Delete Tag"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tagList" />
 
     <RadioGroup
         android:id="@+id/typeGroup"
@@ -73,7 +87,6 @@
         android:layout_height="65dp"
         android:layout_marginBottom="16dp"
         android:layout_marginStart="24dp"
-        android:checkedButton="@id/personType"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -106,21 +119,29 @@
         android:id="@+id/tagValueText"
         android:layout_width="wrap_content"
         android:layout_height="19dp"
-        android:layout_marginBottom="80dp"
-        android:layout_marginStart="70dp"
+        android:layout_marginBottom="72dp"
+        android:layout_marginStart="32dp"
         android:editable="false"
         android:text="Enter Tag Value"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tagTypeText" />
+        app:layout_constraintStart_toEndOf="@+id/typeGroup" />
 
     <TextView
         android:id="@+id/tagValue"
-        android:layout_width="168dp"
-        android:layout_height="29dp"
+        android:layout_width="125dp"
+        android:layout_height="30dp"
         android:layout_marginBottom="32dp"
-        android:layout_marginStart="39dp"
+        android:layout_marginStart="20dp"
         android:background="@color/colorAccent"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/typeGroup" />
+
+    <Button
+        android:id="@+id/backBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        tools:layout_editor_absoluteX="307dp"
+        tools:layout_editor_absoluteY="19dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

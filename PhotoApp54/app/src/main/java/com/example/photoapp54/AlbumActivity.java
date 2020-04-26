@@ -9,15 +9,12 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 
 import com.example.photoapp54.model.Album;
-import com.example.photoapp54.PhotoAdaptor;
 import com.example.photoapp54.model.Photo;
 
 import java.io.FileDescriptor;
@@ -25,17 +22,15 @@ import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 
 public class AlbumActivity extends AppCompatActivity {
 
-    private ArrayList<Album> allAlbums;
-    private TextView albumName;
-    private Album currAlbum;
     private GridView photoList;
+    private TextView albumName;
+
+    private ArrayList<Album> allAlbums;
+    private Album currAlbum;
     private int currAlbumPos;
     public String path;
 
@@ -73,6 +68,7 @@ public class AlbumActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DisplayActivity.class);
 
         intent.putExtra("allAlbums", allAlbums);
+        intent.putExtra("currAlbum", currAlbum);
         intent.putExtra("currAlbumPos", currAlbumPos);
         intent.putExtra("currPhotoPos", photoList.getCheckedItemPosition());
         startActivity(intent);
@@ -109,6 +105,7 @@ public class AlbumActivity extends AppCompatActivity {
                         adaptor.remove(adaptor.getItem(currPhoto));
                         currAlbum.removePicture(adaptor.getItem(currPhoto));
                         saveData(allAlbums);
+                        photoList.refreshDrawableState();
                         if(!currAlbum.getPictureList().isEmpty()){
                             if(currPhoto==0)
                                 photoList.setItemChecked(0, true);
@@ -175,6 +172,8 @@ public class AlbumActivity extends AppCompatActivity {
 
                     adapter.add(photo);
                     currAlbum.addPicture(photo);
+                    photoList.setItemChecked(adapter.getCount()-1, true);
+                    photoList.refreshDrawableState();
                     saveData(allAlbums);
                 }
             }
