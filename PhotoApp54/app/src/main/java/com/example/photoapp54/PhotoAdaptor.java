@@ -9,49 +9,38 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.List;
-
 import com.example.photoapp54.R;
 import com.example.photoapp54.model.Photo;
+
+import java.util.List;
 
 /**
  * Adapter to hold the photo view and its details.
  */
-public class PhotoAdapter extends ArrayAdapter<Photo> {
+public class PhotoAdaptor extends ArrayAdapter<Photo> {
 
     private Context context;
 
-    /**
-     * initializes the photoAdapter
-     * @param context
-     * @param resourceId
-     * @param items
-     */
-    public PhotoAdapter(Context context, int resourceId, List<Photo> items) {
+    public PhotoAdaptor(Context context, int resourceId, List<Photo> items) {
         super(context, resourceId, items);
         this.context = context;
     }
 
-    /**
-     * Returns the view as requested.
-     * @param position
-     * @param convertView
-     * @param parent
-     * @return view
-     */
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder = null;
         Photo photo = getItem(position);
 
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.photo_view, null);
+            //this is if it is on the display section
+            convertView = inflater.inflate(R.layout.adaptor_view, null);
             holder = new ViewHolder();
-            holder.photo = (ImageView) convertView.findViewById(R.id.photo);
+            holder.photo = (ImageView) convertView.findViewById(R.id.imageDisplay);
             convertView.setTag(holder);
         } else
             holder = (ViewHolder) convertView.getTag();
+
         holder.photo.setImageBitmap(photo.getBitmap());
 
         return convertView;
@@ -62,6 +51,6 @@ public class PhotoAdapter extends ArrayAdapter<Photo> {
      */
     private class ViewHolder {
         ImageView photo;
-        TextView caption;
     }
 }
+
