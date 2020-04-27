@@ -28,8 +28,8 @@ public class MainActivity extends AppCompatActivity {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
-                NavHostFragment.findNavController(MainActivity.this)
-                        .navigate(R.id.action_FirstFragment_to_SecondFragment);
+                /*NavHostFragment.findNavController(MainActivity.this)
+                        .navigate(R.id.action_FirstFragment_to_SecondFragment);*/
             }
         });
     }

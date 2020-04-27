@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.text.Editable;
 import android.view.autofill.AutofillValue;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.GridView;
 import android.widget.RadioGroup;
 import android.widget.Button;
 import android.widget.RadioButton;
@@ -25,7 +25,7 @@ public class SearchPage extends AppCompatActivity {
     private RadioGroup andOr;
     private RadioButton radAnd;
     private RadioButton radOr;
-    private ListView imageView;
+    private GridView imageView;
     private Button search;
     private Button reset;
 
