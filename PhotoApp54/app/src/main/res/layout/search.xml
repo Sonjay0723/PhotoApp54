@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/cardview_dark_background"
     tools:context=".SearchPage">
 
 
@@ -15,6 +16,7 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
+        android:background="@color/cardview_light_background"
         app:errorEnabled="true"
         app:layout_constraintBottom_toTopOf="@id/grp2Tag"
         app:layout_constraintEnd_toEndOf="parent"
@@ -38,6 +40,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
+        android:background="@color/cardview_light_background"
         app:errorEnabled="true"
         app:layout_constraintBottom_toTopOf="@id/btnSearch"
         app:layout_constraintEnd_toEndOf="parent"
@@ -118,6 +121,7 @@
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="32dp"
         android:orientation="horizontal"
+        android:background="@color/cardview_light_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -41,6 +41,9 @@ public class AlbumActivity extends AppCompatActivity {
         path = this.getApplicationInfo().dataDir + "/data.dat";
         Intent intent = getIntent();
         allAlbums = (ArrayList<Album>) intent.getSerializableExtra("allAlbums");
+        if (allAlbums == null)
+            return;
+
         currAlbumPos = intent.getIntExtra("currAlbumPos", 0);
         currAlbum = allAlbums.get( currAlbumPos);
         albumName = findViewById(R.id.albumName);

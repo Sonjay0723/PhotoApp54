@@ -1,5 +1,6 @@
 package com.example.photoapp54;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +29,7 @@ public class SearchPage extends AppCompatActivity {
     private GridView imageView;
     private Button search;
     private Button reset;
+    private ArrayList<Album> allAlbums;
 
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
@@ -40,6 +42,11 @@ public class SearchPage extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search);
+        //String path = this.getApplicationInfo().dataDir + "/data.dat";
+        Intent intent = getIntent();
+        allAlbums = (ArrayList<Album>) intent.getSerializableExtra("allAlbums");
+        if (allAlbums == null)
+            return;
 
         andOr = findViewById(R.id.grp2Tag);
         personTag = findViewById(R.id.txtPersonTag);
@@ -52,8 +59,6 @@ public class SearchPage extends AppCompatActivity {
     }
 
     private void search(View view) {
-        ArrayList<Album> temp = new ArrayList<>();
-        //Change above code to get user's albums;
         ArrayList<Photo> resList = new ArrayList<>();
 
         String strPerson = personTag.getEditText().getText().toString().trim();
@@ -73,7 +78,7 @@ public class SearchPage extends AppCompatActivity {
                 personTag.setError(null);
                 locationTag.setError(null);
                 imageView.removeAllViewsInLayout();
-                resList = tagCheck(temp, strPerson, strLocation);
+                resList = tagCheck(allAlbums, strPerson, strLocation);
             }
         }
         else {
@@ -85,13 +90,11 @@ public class SearchPage extends AppCompatActivity {
                 personTag.setError(null);
                 locationTag.setError(null);
                 imageView.removeAllViewsInLayout();
-                resList = tagCheck(temp, strPerson, strLocation);
+                resList = tagCheck(allAlbums, strPerson, strLocation);
             }
         }
 
-        PhotoAdaptor photoAdaptor = new PhotoAdaptor(this, imageView.getId() , resList);
-        //CHANGE RESOURCEID!!!!!!!!!!!!!!!!
-
+        PhotoAdaptor photoAdaptor = new PhotoAdaptor(this, R.layout.adaptor_view , resList);
         imageView.setAdapter(photoAdaptor);
     }
 
