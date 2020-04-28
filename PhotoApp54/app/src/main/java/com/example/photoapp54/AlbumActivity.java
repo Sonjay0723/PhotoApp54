@@ -81,6 +81,7 @@ public class AlbumActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
 
         intent.putExtra("allAlbums", allAlbums);
+        intent.putExtra("currAlbum", currAlbum);
         intent.putExtra("currAlbumPos", currAlbumPos);
         startActivity(intent);
     }

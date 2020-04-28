@@ -29,7 +29,11 @@ public class SearchPage extends AppCompatActivity {
     private GridView imageView;
     private Button search;
     private Button reset;
+    private Button back;
     private ArrayList<Album> allAlbums;
+    private Album currAlbum;
+    private int currAlbumPos;
+    //public String path;
 
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
@@ -42,12 +46,7 @@ public class SearchPage extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search);
-        //String path = this.getApplicationInfo().dataDir + "/data.dat";
-        Intent intent = getIntent();
-        allAlbums = (ArrayList<Album>) intent.getSerializableExtra("allAlbums");
-        if (allAlbums == null)
-            return;
-
+        //path = this.getApplicationInfo().dataDir + "/data.dat";
         andOr = findViewById(R.id.grp2Tag);
         personTag = findViewById(R.id.txtPersonTag);
         locationTag = findViewById(R.id.txtLocationTag);
@@ -56,13 +55,31 @@ public class SearchPage extends AppCompatActivity {
         imageView = findViewById(R.id.imageView);
         search = findViewById(R.id.btnSearch);
         reset = findViewById(R.id.btnReset);
+        back = findViewById(R.id.btnBack);
+
+        Intent intent = getIntent();
+        allAlbums = (ArrayList<Album>) intent.getSerializableExtra("allAlbums");
+        if (allAlbums == null || allAlbums.isEmpty())
+            return;
+
+        currAlbumPos = intent.getIntExtra("currAlbumPos", 0);
+        currAlbum = allAlbums.get(currAlbumPos);
     }
 
-    private void search(View view) {
+    public void search(View view) {
         ArrayList<Photo> resList = new ArrayList<>();
 
-        String strPerson = personTag.getEditText().getText().toString().trim();
-        String strLocation = locationTag.getEditText().getText().toString().trim();
+        String strPerson;
+        String strLocation;
+        try {
+            strPerson = personTag.getEditText().getText().toString().trim();
+            strLocation = locationTag.getEditText().getText().toString().trim();
+        }
+        catch (NullPointerException e) {
+            strPerson = "";
+            strLocation = "";
+        }
+
 
         if (radAnd.isSelected() || radOr.isSelected()) {
             if (strPerson.isEmpty()) {
@@ -74,19 +91,18 @@ public class SearchPage extends AppCompatActivity {
                 return;
             }
 
-            if (!strPerson.isEmpty() && !strLocation.isEmpty()) {
-                personTag.setError(null);
-                locationTag.setError(null);
-                imageView.removeAllViewsInLayout();
-                resList = tagCheck(allAlbums, strPerson, strLocation);
-            }
+            personTag.setError(null);
+            locationTag.setError(null);
+            imageView.removeAllViewsInLayout();
+            resList = tagCheck(allAlbums, strPerson, strLocation);
         }
         else {
             if (strPerson.isEmpty() && strLocation.isEmpty()) {
                 personTag.setError("Both fields can't be empty!");
                 locationTag.setError("Both fields can't be empty!");
                 return;
-            }else {
+            }
+            else {
                 personTag.setError(null);
                 locationTag.setError(null);
                 imageView.removeAllViewsInLayout();
@@ -163,10 +179,19 @@ public class SearchPage extends AppCompatActivity {
         return resList;
     }
 
-    private void reset(View view) {
+    public void reset(View view) {
         personTag.getEditText().setText("");
         locationTag.getEditText().setText("");
         andOr.clearCheck();
         imageView.removeAllViewsInLayout();
+    }
+
+    public void backHome(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+
+        intent.putExtra("allAlbums", allAlbums);
+        intent.putExtra("currAlbum", currAlbum);
+        intent.putExtra("currAlbumPos", currAlbumPos);
+        startActivity(intent);
     }
 }

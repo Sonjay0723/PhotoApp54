@@ -20,6 +20,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".AlbumActivity" />
+        <activity android:name=".SearchPage" />
+        <activity android:name=".DisplayActivity" />
     </application>
 
 </manifest>
