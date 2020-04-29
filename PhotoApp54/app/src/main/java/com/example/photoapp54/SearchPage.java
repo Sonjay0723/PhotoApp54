@@ -182,6 +182,8 @@ public class SearchPage extends AppCompatActivity {
     public void reset(View view) {
         personTag.getEditText().setText("");
         locationTag.getEditText().setText("");
+        personTag.setError(null);
+        locationTag.setError(null);
         andOr.clearCheck();
         imageView.removeAllViewsInLayout();
     }

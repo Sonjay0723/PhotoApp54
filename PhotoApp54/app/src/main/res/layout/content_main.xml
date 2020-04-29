@@ -8,7 +8,7 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <ListView
-        android:id="@+id/albumLlist"
+        android:id="@+id/albumList"
         android:layout_width="wrap_content"
         android:layout_height="150dp"
         android:layout_marginTop="75dp"
