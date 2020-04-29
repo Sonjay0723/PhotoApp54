@@ -24,7 +24,9 @@ import android.widget.ListView;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -44,6 +46,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         path = this.getApplicationInfo().dataDir + "/data.dat";
+        File baseFile = new File("data/dat");
+        if (!baseFile.exists()) {
+            try {
+                baseFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = findViewById(R.id.fab);
