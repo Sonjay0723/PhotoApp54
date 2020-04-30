@@ -23,13 +23,19 @@ import android.widget.GridView;
 import android.widget.ListView;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.widget.TextView;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Array;
+import java.io.PrintWriter;
+import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,19 +43,52 @@ public class MainActivity extends AppCompatActivity {
     private Album currAlbum;
     private int currAlbumPos;
     public String path;
+    String currAlbumTxt;
 
     private ListView albumList;
     private GridView imageList;
+    private TextView albumName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         path = this.getApplicationInfo().dataDir + "/data.dat";
-        File baseFile = new File("data/dat");
+        currAlbumTxt = this.getApplicationInfo().dataDir + "/currAlbum.txt";
+        File baseFile = new File(path);
+        File currAlbumFile = new File(currAlbumTxt);
+
         if (!baseFile.exists()) {
             try {
                 baseFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            try {
+                FileInputStream fileInputStream = new FileInputStream(path);
+                ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+
+                allAlbums = (ArrayList<Album>) objectInputStream.readObject();
+
+                objectInputStream.close();
+                fileInputStream.close();
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+        }
+
+        if (!currAlbumFile.exists()) {
+            try {
+                currAlbumFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            try {
+                currAlbumPos = readPos(currAlbumFile);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -59,12 +98,19 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton fab = findViewById(R.id.fab);
         albumList = findViewById(R.id.albumList);
         imageList = findViewById(R.id.picList);
+        albumName = findViewById(R.id.albumName);
+        albumName.setText(("Album:"));
 
         Intent intent = getIntent();
-        allAlbums = (ArrayList<Album>) intent.getSerializableExtra("allAlbums");
+        if ((ArrayList<Album>) intent.getSerializableExtra("allAlbums") != null)
+            allAlbums = (ArrayList<Album>) intent.getSerializableExtra("allAlbums");
+
         if (allAlbums != null && !allAlbums.isEmpty()) {
-            currAlbumPos = intent.getIntExtra("currAlbumPos", 0);
+            if (intent.getIntExtra("currAlbumPos", -1) != -1)
+                currAlbumPos = intent.getIntExtra("currAlbumPos", 0);
+
             currAlbum = allAlbums.get(currAlbumPos);
+            albumName.setText(("Album: " + currAlbum.getTitle()));
 
             ArrayList<String> titles = new ArrayList<>();
             for (int i = 0; i < allAlbums.size(); i++)
@@ -104,7 +150,14 @@ public class MainActivity extends AppCompatActivity {
                 albumList.setItemChecked(position, true);
                 currAlbumPos = position;
                 currAlbum = allAlbums.get(currAlbumPos);
+                albumName.setText(("Album: " + currAlbum.getTitle()));
                 updatePhotos(currAlbum);
+                try{
+                    savePos(currAlbumFile, currAlbumPos);
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -234,6 +287,15 @@ public class MainActivity extends AppCompatActivity {
         titleAdapter.setNotifyOnChange(true);
         albumList.setAdapter(titleAdapter);
         albumList.setItemChecked(currAlbumPos, true);
+        currAlbum = allAlbums.get(currAlbumPos);
+        File currAlbumFile = new File(currAlbumTxt);
+        try{
+            savePos(currAlbumFile, currAlbumPos);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        albumName.setText(("Album: " + currAlbum.getTitle()));
     }
 
     private void updatePhotos(Album album) {
@@ -337,5 +399,22 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception exception) {
             exception.printStackTrace();
         }
+    }
+
+    private int readPos(File fp) throws IOException {
+        Scanner r1 = new Scanner(fp);
+        String temp = r1.nextLine();
+        int res = Integer.parseInt(temp);
+        r1.close();
+        return res;
+    }
+
+    private void savePos(File fp, int pos) throws IOException {
+        if (fp.delete()) {
+            fp.createNewFile();
+        }
+        PrintWriter w1 = new PrintWriter(fp);
+        w1.write((pos + ""));
+        w1.close();
     }
 }
