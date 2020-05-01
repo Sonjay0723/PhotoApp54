@@ -37,7 +37,7 @@ public class DisplayActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.album_page);
+        setContentView(R.layout.display_photo);
         path = this.getApplicationInfo().dataDir + "/data.dat";
         Intent intent = getIntent();
         allAlbums = (ArrayList<Album>) intent.getSerializableExtra("allAlbums");
