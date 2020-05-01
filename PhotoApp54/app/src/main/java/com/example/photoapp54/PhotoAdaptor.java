@@ -20,28 +20,32 @@ import java.util.List;
 public class PhotoAdaptor extends ArrayAdapter<Photo> {
 
     private Context context;
+    private List items;
 
     public PhotoAdaptor(Context context, int resourceId, List<Photo> items) {
         super(context, resourceId, items);
         this.context = context;
+        this.items = items;
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder = null;
-        Photo photo = getItem(position);
+
+       // ViewHolder holder = null;
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 
         if (convertView == null) {
             //this is if it is on the display section
             convertView = inflater.inflate(R.layout.adaptor_view, null);
-            holder = new ViewHolder();
-            holder.photo = (ImageView) convertView.findViewById(R.id.imageDisplay);
-            convertView.setTag(holder);
-        } else
-            holder = (ViewHolder) convertView.getTag();
+            //holder = new ViewHolder();
+            //holder.photo = (ImageView) convertView.findViewById(R.id.imageDisplay);
+            //convertView.setTag(holder);
+        }
 
-        holder.photo.setImageBitmap(photo.getBitmap());
+        ImageView toEnter = (ImageView) convertView.findViewById(R.id.imageDisplay);
+
+        Photo photo = (Photo) items.get(position);
+        toEnter.setImageBitmap(photo.getBitmap());
 
         return convertView;
     }

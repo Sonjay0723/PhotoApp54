@@ -127,6 +127,8 @@ public class AlbumActivity extends AppCompatActivity {
                 });
         builder.show();
 
+        photoList.setAdapter(adaptor);
+
         return;
     }
 
@@ -179,6 +181,7 @@ public class AlbumActivity extends AppCompatActivity {
                     photoList.setItemChecked(adapter.getCount()-1, true);
                     photoList.refreshDrawableState();
                     saveData(allAlbums);
+                    photoList.setAdapter(adapter);
                 }
             }
         }
