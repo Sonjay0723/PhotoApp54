@@ -68,6 +68,8 @@ public class SearchPage extends AppCompatActivity {
 
     public void search(View view) {
         ArrayList<Photo> resList = new ArrayList<>();
+        personTag.setError(null);
+        locationTag.setError(null);
 
         String strPerson;
         String strLocation;
@@ -81,7 +83,7 @@ public class SearchPage extends AppCompatActivity {
         }
 
 
-        if (radAnd.isSelected() || radOr.isSelected()) {
+        if (radAnd.isChecked() || radOr.isChecked()) {
             if (strPerson.isEmpty()) {
                 personTag.setError("Field can't be empty!");
                 return;
@@ -91,15 +93,22 @@ public class SearchPage extends AppCompatActivity {
                 return;
             }
 
-            personTag.setError(null);
-            locationTag.setError(null);
-            imageView.removeAllViewsInLayout();
-            resList = tagCheck(allAlbums, strPerson, strLocation);
+            if (!strPerson.isEmpty() && !strLocation.isEmpty()) {
+                personTag.setError(null);
+                locationTag.setError(null);
+                imageView.removeAllViewsInLayout();
+                resList = tagCheck(allAlbums, strPerson, strLocation);
+            }
         }
         else {
             if (strPerson.isEmpty() && strLocation.isEmpty()) {
                 personTag.setError("Both fields can't be empty!");
                 locationTag.setError("Both fields can't be empty!");
+                return;
+            }
+            else if (!strPerson.isEmpty() && !strLocation.isEmpty()) {
+                personTag.setError("Please only select one tag!");
+                locationTag.setError("Or choose 'And' or 'Or'!");
                 return;
             }
             else {
@@ -119,7 +128,7 @@ public class SearchPage extends AppCompatActivity {
         for (int i = 0; i < albums.size(); i++) {
             Album currAlbum = albums.get(i);
 
-            if (radAnd.isSelected()) {
+            if (radAnd.isChecked()) {
                 boolean pFound = false;
                 boolean lFound = false;
                 Tag pTagTemp = new Tag("person", pTag, false);
@@ -141,7 +150,7 @@ public class SearchPage extends AppCompatActivity {
                     }
                 }
             }
-            else if (radOr.isSelected()) {
+            else if (radOr.isChecked()) {
                 Tag pTagTemp = new Tag("person", pTag, false);
                 Tag lTagTemp = new Tag("location", lTag, false);
 
@@ -182,6 +191,8 @@ public class SearchPage extends AppCompatActivity {
     public void reset(View view) {
         personTag.getEditText().setText("");
         locationTag.getEditText().setText("");
+        personTag.setError(null);
+        locationTag.setError(null);
         andOr.clearCheck();
         imageView.removeAllViewsInLayout();
     }
