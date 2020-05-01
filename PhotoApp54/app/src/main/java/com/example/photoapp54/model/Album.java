@@ -71,10 +71,13 @@ public class Album implements Serializable {
      * @param newPicture picture to add to the album's picture list(As long as it is not already there)
      */
     public void addPicture(Photo newPicture) {
-        for(int i=0; i<this.getPictureList().size(); i++) {
-            if(this.getPicture(this.pictureList.get(i)).equals(newPicture.getBitmap()))
-                return;
+        if (this.pictureList.size() != 0) {
+            for(int i=0; i<this.pictureList.size(); i++) {
+                if(this.getPicture(this.pictureList.get(i)).equals(newPicture.getBitmap()))
+                    return;
+            }
         }
+
         pictureList.add(newPicture);
     }
 

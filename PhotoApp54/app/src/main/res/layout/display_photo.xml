@@ -26,6 +26,7 @@
         android:layout_marginEnd="80dp"
         android:layout_marginTop="264dp"
         android:text="Next"
+        android:onClick="nextImg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -36,6 +37,7 @@
         android:layout_marginStart="80dp"
         android:layout_marginTop="264dp"
         android:text="Previous"
+        android:onClick="previousImg"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -69,6 +71,7 @@
         android:layout_marginBottom="10dp"
         android:layout_marginEnd="16dp"
         android:text="Add Tag"
+        android:onClick="addTag"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -79,6 +82,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginTop="10dp"
         android:text="Delete Tag"
+        android:onClick="deleteTag"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tagList" />
 
@@ -142,7 +146,10 @@
         android:id="@+id/backBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="19dp"
+        android:layout_marginEnd="16dp"
         android:text="Back"
-        tools:layout_editor_absoluteX="307dp"
-        tools:layout_editor_absoluteY="19dp" />
+        android:onClick="backBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
