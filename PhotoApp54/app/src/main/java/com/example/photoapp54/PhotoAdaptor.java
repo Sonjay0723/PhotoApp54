@@ -2,16 +2,21 @@ package com.example.photoapp54;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.photoapp54.R;
 import com.example.photoapp54.model.Photo;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 /**
@@ -28,9 +33,9 @@ public class PhotoAdaptor extends ArrayAdapter<Photo> {
         this.items = items;
     }
 
+    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
-       // ViewHolder holder = null;
+        // ViewHolder holder = null;
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 
@@ -45,8 +50,8 @@ public class PhotoAdaptor extends ArrayAdapter<Photo> {
         ImageView toEnter = (ImageView) convertView.findViewById(R.id.imageDisplay);
 
         Photo photo = (Photo) items.get(position);
-        toEnter.setImageBitmap(photo.getBitmap());
-
+        //toEnter.setImageBitmap(photo.getImage());
+        toEnter.setImageURI(Uri.parse(photo.getPath()));
         return convertView;
     }
 

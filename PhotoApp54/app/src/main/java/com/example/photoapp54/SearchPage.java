@@ -119,8 +119,12 @@ public class SearchPage extends AppCompatActivity {
             }
         }
 
-        PhotoAdaptor photoAdaptor = new PhotoAdaptor(this, R.layout.adaptor_view , resList);
-        imageView.setAdapter(photoAdaptor);
+        if (resList.isEmpty())
+            imageView.setAdapter(null);
+        else {
+            PhotoAdaptor photoAdaptor = new PhotoAdaptor(this, R.layout.adaptor_view , resList);
+            imageView.setAdapter(photoAdaptor);
+        }
     }
 
     private ArrayList<Photo> tagCheck(ArrayList<Album> albums, String pTag, String lTag) {
@@ -138,9 +142,17 @@ public class SearchPage extends AppCompatActivity {
                     Photo currPhoto = currAlbum.getPictureList().get(i);
 
                     for (int k = 0; k < currPhoto.getTags().size(); k++) {
-                        if (currPhoto.getTags().get(i).equals(pTagTemp))
+                        Tag currTagTemp = currPhoto.getTags().get(k);
+                        if (currTagTemp.getName().toLowerCase().equals("person") && currTagTemp.getValue().length() > pTag.length()) {
+                            currTagTemp = new Tag("person", currTagTemp.getValue().substring(0, pTag.length()), false);
+                        }
+                        else if (currTagTemp.getName().toLowerCase().equals("location") && currTagTemp.getValue().length() > lTag.length()) {
+                            currTagTemp = new Tag("location", currTagTemp.getValue().substring(0, lTag.length()), false);
+                        }
+
+                        if (currTagTemp.equals(pTagTemp))
                             pFound = true;
-                        if (currPhoto.getTags().get(i).equals(lTagTemp))
+                        if (currTagTemp.equals(lTagTemp))
                             lFound = true;
 
                         if (pFound && lFound) {
@@ -158,7 +170,15 @@ public class SearchPage extends AppCompatActivity {
                     Photo currPhoto = currAlbum.getPictureList().get(i);
 
                     for (int k = 0; k < currPhoto.getTags().size(); k++) {
-                        if (currPhoto.getTags().get(i).equals(pTagTemp) || currPhoto.getTags().get(i).equals(lTagTemp)) {
+                        Tag currTagTemp = currPhoto.getTags().get(k);
+                        if (currTagTemp.getName().toLowerCase().equals("person") && currTagTemp.getValue().length() > pTag.length()) {
+                            currTagTemp = new Tag("person", currTagTemp.getValue().substring(0, pTag.length()), false);
+                        }
+                        else if (currTagTemp.getName().toLowerCase().equals("location") && currTagTemp.getValue().length() > lTag.length()) {
+                            currTagTemp = new Tag("location", currTagTemp.getValue().substring(0, lTag.length()), false);
+                        }
+
+                        if (currTagTemp.equals(pTagTemp) || currTagTemp.equals(lTagTemp)) {
                             resList.add(currPhoto);
                             break;
                         }
@@ -176,7 +196,15 @@ public class SearchPage extends AppCompatActivity {
                     Photo currPhoto = currAlbum.getPictureList().get(i);
 
                     for (int k = 0; k < currPhoto.getTags().size(); k++) {
-                        if (currPhoto.getTags().get(i).equals(temp)) {
+                        Tag currTagTemp = currPhoto.getTags().get(k);
+                        if (currTagTemp.getName().toLowerCase().equals("person") && currTagTemp.getValue().length() > pTag.length()) {
+                            currTagTemp = new Tag("person", currTagTemp.getValue().substring(0, pTag.length()), false);
+                        }
+                        else if (currTagTemp.getName().toLowerCase().equals("location") && currTagTemp.getValue().length() > lTag.length()) {
+                            currTagTemp = new Tag("location", currTagTemp.getValue().substring(0, lTag.length()), false);
+                        }
+
+                        if (currTagTemp.equals(temp)) {
                             resList.add(currPhoto);
                             break;
                         }

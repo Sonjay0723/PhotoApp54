@@ -3,6 +3,7 @@ package com.example.photoapp54;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.*;
@@ -10,6 +11,7 @@ import android.widget.*;
 import com.example.photoapp54.model.Album;
 import com.example.photoapp54.model.Photo;
 import com.example.photoapp54.model.Tag;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
@@ -24,15 +26,15 @@ public class DisplayActivity extends AppCompatActivity {
     private RadioGroup typeGroup;
     private RadioButton personType;
     private RadioButton locationType;
-    private TextView tagValue;
+    private TextInputLayout tagValue;
 
     private ArrayList<Album> allAlbums;
     private Album currAlbum;
     private int currAlbumPos;
     private int currPhotoPos;
     public String path;
-
     private Photo photo;
+    private Tag currTag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,47 +45,62 @@ public class DisplayActivity extends AppCompatActivity {
         allAlbums = (ArrayList<Album>) intent.getSerializableExtra("allAlbums");
         currAlbum = (Album) intent.getSerializableExtra("currAlbum");
         currAlbumPos = intent.getIntExtra("currAlbumPos", 0);
+        photo = (Photo) intent.getSerializableExtra("currPhoto");
         currPhotoPos = intent.getIntExtra("currPhotoPos", 0);
-        photo = currAlbum.getPictureList().get(currPhotoPos);
+        //photo = currAlbum.getPictureList().get(currPhotoPos);
 
-        typeGroup = typeGroup.findViewById(R.id.typeGroup);
-        personType = personType.findViewById(R.id.personType);
-        locationType = locationType.findViewById(R.id.locationType);
-        tagValue = tagValue.findViewById(R.id.tagValue);
-
-        ArrayAdapter<Tag> adapter = new ArrayAdapter<>(this, R.layout.arrayadaptor_view, photo.getTags());
-        adapter.setNotifyOnChange(true);
+        typeGroup = findViewById(R.id.typeGroup);
+        personType = findViewById(R.id.personType);
+        locationType = findViewById(R.id.locationType);
+        tagValue = findViewById(R.id.tagValue);
         tagList = findViewById(R.id.tagList);
-        tagList.setAdapter(adapter);
-        if(!photo.getTags().isEmpty()) {
+        imageView = findViewById(R.id.imageView);
+        imageView.setImageURI(Uri.parse(photo.getPath()));
+        ArrayList<String> temp = new ArrayList<>();
+        for (int i = 0; i < allAlbums.size(); i++) {
+            temp.add("Album: " + allAlbums.get(i).getTitle());
+        }
+        temp.add("currAlbumPos: " + currAlbumPos);
+        temp.add("Curr Album: " + currAlbum.getTitle());
+        temp.add("currPhotoPos: " + currPhotoPos);
+        temp.add("currPhoto: " + photo.getPhotoName());
+        ArrayAdapter<String> adaptor = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, temp);
+        adaptor.setNotifyOnChange(true);
+        tagList = findViewById(R.id.tagList);
+        tagList.setAdapter(adaptor);
+
+        /*ArrayAdapter<Tag> adapter = new ArrayAdapter<>(this, R.layout.arrayadaptor_view, photo.getTags());
+        adapter.setNotifyOnChange(true);*/
+
+        /*if(!photo.getTags().isEmpty()) {
+            updateTags(photo);
             tagList.setItemChecked(0, true);
-            Tag currTag = currAlbum.getPictureList().get(currPhotoPos).getTags().get(tagList.getCheckedItemPosition());
+            currTag = photo.getTags().get(0);
             if(currTag.getName().equals("person"))
                 typeGroup.check(R.id.personType);
             else
                 typeGroup.check(R.id.locationType);
 
-            tagValue.setText(currTag.getValue());
+            tagValue.setHint(currTag.getValue());
         }
-        else
+        else {
+            tagList.setAdapter(null);
             typeGroup.check(R.id.personType);
+        }*/
 
         tagList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 tagList.setItemChecked(position,true);
-                Tag currTag = currAlbum.getPictureList().get(currPhotoPos).getTags().get(tagList.getCheckedItemPosition());
+                currTag = photo.getTags().get(position);
                 if(currTag.getName().equals("person"))
                     typeGroup.check(R.id.personType);
                 else
                     typeGroup.check(R.id.locationType);
 
-                tagValue.setText(currTag.getValue());
+                tagValue.setHint(currTag.getValue());
             }
         });
-
-        imageView.findViewById(R.id.imageView);
-        imageView.setImageBitmap(photo.getBitmap());
     }
 
     public void backBtn(View view) {
@@ -98,34 +115,35 @@ public class DisplayActivity extends AppCompatActivity {
 
     public void nextImg(View view){
         if(currPhotoPos+1 >= currAlbum.getPictureList().size()){
-            imageView.setImageBitmap(currAlbum.getPictureList().get(0).getBitmap());
+            imageView.setImageURI(Uri.parse(currAlbum.getPictureList().get(0).getPath()));
             currPhotoPos=0;
         }
         else{
-            imageView.setImageBitmap(currAlbum.getPictureList().get(currPhotoPos+1).getBitmap());
-            currPhotoPos ++;
+            imageView.setImageURI(Uri.parse(currAlbum.getPictureList().get(currPhotoPos+1).getPath()));
+            currPhotoPos++;
         }
 
-        Photo currPhoto = currAlbum.getPictureList().get(currPhotoPos);
+        photo = currAlbum.getPictureList().get(currPhotoPos);
 
-        ArrayAdapter<Tag> adapter = new ArrayAdapter<>(this, R.layout.arrayadaptor_view, currPhoto.getTags());
+        /*ArrayAdapter<Tag> adapter = new ArrayAdapter<>(this, R.layout.arrayadaptor_view, photo.getTags());
         adapter.setNotifyOnChange(true);
         tagList = findViewById(R.id.tagList);
-        tagList.setAdapter(adapter);
-        if(!currPhoto.getTags().isEmpty()) {
+        tagList.setAdapter(adapter);*/
+        updateTags(photo);
+        if(!photo.getTags().isEmpty()) {
             tagList.setItemChecked(0, true);
-            Tag currTag = currAlbum.getPictureList().get(currPhotoPos).getTags().get(tagList.getCheckedItemPosition());
+            currTag = photo.getTags().get(0);
             if(currTag.getName().equals("person"))
                 typeGroup.check(R.id.personType);
             else
                 typeGroup.check(R.id.locationType);
 
-            tagValue.setText(currTag.getValue());
+            tagValue.setHint(currTag.getValue());
         }
         else
             typeGroup.check(R.id.personType);
 
-        tagList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        /*tagList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 tagList.setItemChecked(position,true);
@@ -137,39 +155,40 @@ public class DisplayActivity extends AppCompatActivity {
 
                 tagValue.setText(currTag.getValue());
             }
-        });
+        });*/
     }
 
     public void previousImg(View view){
         if(currPhotoPos-1 <0){
-            imageView.setImageBitmap(currAlbum.getPictureList().get(currAlbum.getPictureList().size()-1).getBitmap());
+            imageView.setImageURI(Uri.parse(currAlbum.getPictureList().get(currAlbum.getPictureList().size()-1).getPath()));
             currPhotoPos=currAlbum.getPictureList().size()-1;
         }
         else{
-            imageView.setImageBitmap(currAlbum.getPictureList().get(currPhotoPos-1).getBitmap());
-            currPhotoPos --;
+            imageView.setImageURI(Uri.parse(currAlbum.getPictureList().get(currAlbumPos-1).getPath()));
+            currPhotoPos--;
         }
 
-        Photo currPhoto = currAlbum.getPictureList().get(currPhotoPos);
+        photo = currAlbum.getPictureList().get(currPhotoPos);
 
-        ArrayAdapter<Tag> adapter = new ArrayAdapter<>(this, R.layout.arrayadaptor_view, currPhoto.getTags());
+        /*ArrayAdapter<Tag> adapter = new ArrayAdapter<>(this, R.layout.arrayadaptor_view, currPhoto.getTags());
         adapter.setNotifyOnChange(true);
         tagList = findViewById(R.id.tagList);
-        tagList.setAdapter(adapter);
-        if(!currPhoto.getTags().isEmpty()) {
+        tagList.setAdapter(adapter);*/
+        updateTags(photo);
+        if(!photo.getTags().isEmpty()) {
             tagList.setItemChecked(0, true);
-            Tag currTag = currAlbum.getPictureList().get(currPhotoPos).getTags().get(tagList.getCheckedItemPosition());
+            currTag = photo.getTags().get(0);
             if(currTag.getName().equals("person"))
                 typeGroup.check(R.id.personType);
             else
                 typeGroup.check(R.id.locationType);
 
-            tagValue.setText(currTag.getValue());
+            tagValue.setHint(currTag.getValue());
         }
         else
             typeGroup.check(R.id.personType);
 
-        tagList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        /*tagList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 tagList.setItemChecked(position,true);
@@ -181,14 +200,14 @@ public class DisplayActivity extends AppCompatActivity {
 
                 tagValue.setText(currTag.getValue());
             }
-        });
+        });*/
     }
 
     public void addTag(View view){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         tagValue = findViewById(R.id.tagValue);
-        if(tagValue.getText().toString().isEmpty()){
+        if(tagValue.getEditText().getText().toString().isEmpty()){
             builder.setTitle("Oops! There was an error...");
             builder.setMessage("There is no value entered to add!");
             builder.setPositiveButton("Close", null);
@@ -197,24 +216,21 @@ public class DisplayActivity extends AppCompatActivity {
             return;
         }
 
-        String tagTypeSelected = "Person";
+        String tagTypeSelected = "person";
         boolean multipleValues = true;
-        boolean checked = ((RadioButton) view).isChecked();
-        switch(view.getId()){
-            case R.id.personType:
-                if(checked)
-                    break;
-            case R.id.locationType:
-                if(checked) {
-                    tagTypeSelected = "Location";
-                    multipleValues = false;
-                }
-                break;
+        if (personType.isChecked()) {
+            tagTypeSelected = "person";
+            multipleValues = true;
+        }
+        else if (locationType.isChecked()) {
+            multipleValues = false;
+            tagTypeSelected = "location";
         }
 
-        Tag newTag = new Tag(tagTypeSelected, tagValue.getText().toString(), multipleValues);
-        for(int i=0; i< currAlbum.getPictureList().get(currPhotoPos).getTags().size(); i++){
-            if(currAlbum.getPictureList().get(currPhotoPos).getTags().get(i).equals(newTag)){
+        //if (true) return;
+        Tag newTag = new Tag(tagTypeSelected, tagValue.getEditText().getText().toString(), multipleValues);
+        for(int i=0; i< photo.getTags().size(); i++){
+            if(photo.getTags().get(i).equals(newTag)){
                 builder.setTitle("Oops! There was an error...");
                 builder.setMessage("This tag already exists!");
                 builder.setPositiveButton("Close", null);
@@ -222,7 +238,7 @@ public class DisplayActivity extends AppCompatActivity {
 
                 return;
             }
-            else if(currAlbum.getPictureList().get(currPhotoPos).getTags().get(i).getName().equals("location")){
+            else if(photo.getTags().get(i).getName().equals("location") && newTag.getName().equals("location")){
                 builder.setTitle("Oops! There was an error...");
                 builder.setMessage("Location is only allowed one value, and "+currAlbum.getPictureList().get(currPhotoPos).getPhotoName()+" already has a location!");
                 builder.setPositiveButton("Close", null);
@@ -233,15 +249,16 @@ public class DisplayActivity extends AppCompatActivity {
         }
 
         builder.setTitle("Add Tag");
-        builder.setMessage("Add tag"+ newTag.toString()+" from "+ currAlbum.getPictureList().get(currPhotoPos).getPhotoName()+"?");
+        builder.setMessage("Add tag " + newTag.toString() + " to "+ photo.getPhotoName()+"?");
         builder.setPositiveButton("Yes",
             new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    currAlbum.getPictureList().get(currPhotoPos).addTag(newTag);
-                    tagList.refreshDrawableState();
+                    photo.addTag(newTag);
+                    currTag = newTag;
                     saveData(allAlbums);
-                    tagList.setItemChecked(currAlbum.getPictureList().get(currPhotoPos).getTags().size()-1, true);
+                    updateTags(photo);
+                    tagList.setItemChecked(photo.getTags().size()-1, true);
                 }
             });
         builder.setNegativeButton("No",
@@ -253,13 +270,15 @@ public class DisplayActivity extends AppCompatActivity {
                 });
         builder.show();
 
+        typeGroup.clearCheck();
+        typeGroup.check(R.id.personType);
         return;
     }
 
     public void deleteTag(View view){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        if(currAlbum.getPictureList().get(currPhotoPos).getTags().isEmpty()){
+        if(photo.getTags().isEmpty()){
             builder.setTitle("Oops! There was an error...");
             builder.setMessage("There are now tags selected to delete!");
             builder.setPositiveButton("Close", null);
@@ -268,26 +287,24 @@ public class DisplayActivity extends AppCompatActivity {
             return;
         }
 
-        Tag currTag = currAlbum.getPictureList().get(currPhotoPos).getTags().get(tagList.getCheckedItemPosition());
-
         builder.setTitle("Delete Tag");
-        builder.setMessage("Delete tag"+ currTag +" from "+ currAlbum.getPictureList().get(currPhotoPos).getPhotoName()+"?");
+        builder.setMessage("Delete tag "+ currTag.toString() +" from "+ photo.getPhotoName()+"?");
         builder.setPositiveButton("Yes",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        currAlbum.getPictureList().get(currPhotoPos).removeTag(currTag.getName(), currTag.getValue());
-                        tagList.refreshDrawableState();
+                        photo.removeTag(currTag.getName(), currTag.getValue());
                         saveData(allAlbums);
-                        if(!currAlbum.getPictureList().get(currPhotoPos).getTags().isEmpty()) {
-                            tagList.setItemChecked(currAlbum.getPictureList().get(currPhotoPos).getTags().size() - 1, true);
-                            Tag currTag = currAlbum.getPictureList().get(currPhotoPos).getTags().get(tagList.getCheckedItemPosition());
+                        updateTags(photo);
+                        if(!photo.getTags().isEmpty()) {
+                            tagList.setItemChecked(0, true);
+                            currTag = photo.getTags().get(0);
                             if(currTag.getName().equals("person"))
                                 typeGroup.check(R.id.personType);
                             else
                                 typeGroup.check(R.id.locationType);
 
-                            tagValue.setText(currTag.getValue());
+                            tagValue.setHint(currTag.getValue());
                         }
                         else
                             typeGroup.check(R.id.personType);
@@ -305,6 +322,21 @@ public class DisplayActivity extends AppCompatActivity {
 
         return;
 
+    }
+
+    private void updateTags(Photo photo) {
+        if (photo == null || photo.getTags().size() == 0) {
+            tagList.setAdapter(null);
+            return;
+        }
+        ArrayList<String> strTags = new ArrayList<>();
+        for (int i = 0; i < photo.getTags().size(); i++)
+            strTags.add(photo.getTags().get(i).toString());
+
+        ArrayAdapter<String> adaptor = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, strTags);
+        adaptor.setNotifyOnChange(true);
+        tagList = findViewById(R.id.tagList);
+        tagList.setAdapter(adaptor);
     }
 
     public void saveData(ArrayList<Album> albums) {

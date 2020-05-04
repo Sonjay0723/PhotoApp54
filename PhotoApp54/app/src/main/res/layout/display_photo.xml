@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cardview_dark_background">
+    android:background="@color/cardview_dark_background"
+    tools:context=".DisplayActivity">
 
     <ImageView
         android:id="@+id/imageView"
@@ -131,16 +132,29 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/typeGroup" />
 
-    <TextView
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tagValue"
         android:layout_width="125dp"
-        android:layout_height="30dp"
-        android:layout_marginBottom="32dp"
-        android:layout_marginStart="20dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="10dp"
         android:background="@color/colorAccent"
-        android:visibility="visible"
+        app:errorEnabled="false"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/typeGroup" />
+        app:layout_constraintTop_toBottomOf="@id/tagValueText"
+        app:layout_constraintStart_toEndOf="@id/typeGroup"
+        app:layout_constraintEnd_toStartOf="@id/addTag">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/textInputEditText2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:hint="Tag Value"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/backBtn"

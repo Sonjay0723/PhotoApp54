@@ -24,7 +24,7 @@ public class Tag implements Serializable {
      */
     public Tag(String name, String value, boolean multi) {
         this.name = name.toLowerCase();
-        this.value = value.toLowerCase();
+        this.value = value;
         this.multi = multi;
     }
 
@@ -65,7 +65,7 @@ public class Tag implements Serializable {
             return false;
 
         Tag curr =(Tag ) other;
-        return curr.getName().equals(name) && curr.getValue().equals(value);
+        return curr.getName().toLowerCase().equals(name.toLowerCase()) && curr.getValue().toLowerCase().equals(value.toLowerCase());
     }
 
     /**

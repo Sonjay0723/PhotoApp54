@@ -61,10 +61,12 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="85dp"
         android:layout_marginEnd="160dp"
+        android:layout_marginStart="160dp"
         android:text="Delete"
         android:onClick="deletePhoto"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <Button
         android:id="@+id/moveBtn"

@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -17,9 +19,11 @@ import android.widget.TextView;
 import com.example.photoapp54.model.Album;
 import com.example.photoapp54.model.Photo;
 
+import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,6 +36,7 @@ public class AlbumActivity extends AppCompatActivity {
     private ArrayList<Album> allAlbums;
     private Album currAlbum;
     private int currAlbumPos;
+    private Photo currPhoto;
     public String path;
 
     @Override
@@ -41,8 +46,8 @@ public class AlbumActivity extends AppCompatActivity {
         path = this.getApplicationInfo().dataDir + "/data.dat";
         Intent intent = getIntent();
         allAlbums = (ArrayList<Album>) intent.getSerializableExtra("allAlbums");
-        if (allAlbums == null)
-            return;
+        /*if (allAlbums == null)
+            return;*/
 
         currAlbumPos = intent.getIntExtra("currAlbumPos", 0);
         currAlbum = allAlbums.get( currAlbumPos);
@@ -53,42 +58,64 @@ public class AlbumActivity extends AppCompatActivity {
         adapter.setNotifyOnChange(true);
         photoList = findViewById(R.id.photoList);
         photoList.setAdapter(adapter);
-        if(!currAlbum.getPictureList().isEmpty())
+        if(!currAlbum.getPictureList().isEmpty()) {
             photoList.setItemChecked(0, true);
+            currPhoto = currAlbum.getPictureList().get(0);
+        }
 
         photoList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 photoList.setItemChecked(position, true);
+                currPhoto = currAlbum.getPictureList().get(position);
             }
         });
     }
 
     public void displayPhoto(View view) {
-        if (photoList.getAdapter().getCount() == 0)
+        if (currAlbum.getPictureList().size() == 0) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Oops! There was an error...");
+            builder.setMessage("There are no Images to display!");
+            builder.setPositiveButton("Close", null);
+            builder.show();
             return;
+        }
 
         Intent intent = new Intent(this, DisplayActivity.class);
 
         intent.putExtra("allAlbums", allAlbums);
         intent.putExtra("currAlbum", currAlbum);
         intent.putExtra("currAlbumPos", currAlbumPos);
-        intent.putExtra("currPhotoPos", photoList.getCheckedItemPosition());
+        intent.putExtra("currPhoto", currPhoto);
+        int pos = 0;
+        for (int i = 0; i < currAlbum.getPictureList().size(); i++) {
+            if (currPhoto.equals(currAlbum.getPictureList().get(i))) {
+                pos = i;
+                break;
+            }
+        }
+        intent.putExtra("currPhotoPos", pos);
         startActivity(intent);
     }
 
     public void toHome(View view) {
         Intent intent = new Intent(this, MainActivity.class);
-
-        intent.putExtra("allAlbums", allAlbums);
-        intent.putExtra("currAlbum", currAlbum);
-        intent.putExtra("currAlbumPos", currAlbumPos);
-        startActivity(intent);
+        try {
+            intent.putExtra("allAlbums", allAlbums);
+            intent.putExtra("currAlbum", currAlbum);
+            intent.putExtra("currAlbumPos", currAlbumPos);
+            startActivity(intent);
+        }
+        catch (Exception e) {
+            albumName.setTextSize(12);
+            albumName.setText(e.toString());
+        }
     }
 
     public void deletePhoto(View view){
         PhotoAdaptor adaptor = (PhotoAdaptor) photoList.getAdapter();
-        int currPhoto = photoList.getCheckedItemPosition();
+        //int currPhoto = photoList.getCheckedItemPosition();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         if(adaptor.getCount() == 0){
@@ -101,21 +128,28 @@ public class AlbumActivity extends AppCompatActivity {
         }
 
         builder.setTitle("Delete");
-        builder.setMessage("Delete "+ adaptor.getItem(currPhoto).getPhotoName()+" from "+ currAlbum.getTitle()+"?");
+        builder.setMessage("Delete " + currPhoto.getPhotoName() + " from " + currAlbum.getTitle()+"?");
         builder.setPositiveButton("Yes",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        adaptor.remove(adaptor.getItem(currPhoto));
-                        currAlbum.removePicture(adaptor.getItem(currPhoto));
-                        saveData(allAlbums);
-                        photoList.refreshDrawableState();
-                        if(!currAlbum.getPictureList().isEmpty()){
-                            if(currPhoto==0)
+                        //adaptor.remove(adaptor.getItem(currPhoto));
+                        //try {
+                            currAlbum.removePicture(currPhoto);
+                            saveData(allAlbums);
+                            updatePhotos(currAlbum);
+                            photoList.refreshDrawableState();
+                            if(!currAlbum.getPictureList().isEmpty()){
+                                currPhoto = currAlbum.getPictureList().get(0);
                                 photoList.setItemChecked(0, true);
-                            else
-                                photoList.setItemChecked(currPhoto-1, true);
-                        }
+                            }
+                            else {
+                                photoList.setAdapter(null);
+                            }
+                        /*}
+                        catch (Exception e) {
+                            albumName.setText(e.toString());
+                        }*/
                     }
                 });
         builder.setNegativeButton("No",
@@ -127,7 +161,7 @@ public class AlbumActivity extends AppCompatActivity {
                 });
         builder.show();
 
-        photoList.setAdapter(adaptor);
+        //photoList.setAdapter(adaptor);
 
         return;
     }
@@ -160,34 +194,62 @@ public class AlbumActivity extends AppCompatActivity {
                 }
 
                 if(bitmap!=null) {
-                    String name = uri.getLastPathSegment();
-                    Photo photo = new Photo(bitmap, name);
-                    PhotoAdaptor adapter = (PhotoAdaptor) photoList.getAdapter();
+                    String name = uri.toString();
+                    albumName.setTextSize(12);
+                    albumName.setText(name);
+                    File f = new File(name);
+                    if (f.exists())
+                        albumName.setText(name + " yes");
+                    else
+                        albumName.setText(name + " no");
+                    Photo photo = new Photo(name);
+                    try {
+                        //PhotoAdaptor adapter = (PhotoAdaptor) photoList.getAdapter();
 
-                    for (int i = 0; i < adapter.getCount(); i++) {
-                        if (photo.getBitmap().sameAs(adapter.getItem(i).getBitmap())) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                            builder.setTitle("Oops! There was an error...");
-                            builder.setMessage(name + " already exists in " + currAlbum.getTitle());
-                            builder.setPositiveButton("OK", null);
-                            builder.show();
+                        for (int i = 0; i < currAlbum.getPictureList().size(); i++) {
+                            if (photo.getPath().equals(currAlbum.getPictureList().get(i).getPath())) {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                                builder.setTitle("Oops! There was an error...");
+                                builder.setMessage(name + " already exists in " + currAlbum.getTitle());
+                                builder.setPositiveButton("OK", null);
+                                builder.show();
 
-                            return;
+                                return;
+                            }
                         }
-                    }
 
-                    adapter.add(photo);
-                    currAlbum.addPicture(photo);
-                    photoList.setItemChecked(adapter.getCount()-1, true);
-                    photoList.refreshDrawableState();
+                        //adapter.add(photo);
+                        currAlbum.addPicture(photo);
+                        currPhoto = currAlbum.getPictureList().get(currAlbum.getPictureList().size() - 1);
+                        updatePhotos(currAlbum);
+                        photoList.setItemChecked(currAlbum.getPictureList().size() - 1, true);
+                        photoList.refreshDrawableState();
+                        saveData(allAlbums);
+                        //photoList.setAdapter(adapter);
+                    }
+                    catch (Exception e) {
+                        albumName.setTextSize(12);
+                        albumName.setText(e.toString());
+                    }
+                    /*currAlbum.addPicture(photo);
                     saveData(allAlbums);
+                    adapter = new PhotoAdaptor(this, R.layout.adaptor_view, currAlbum.getPictureList());
                     photoList.setAdapter(adapter);
+                    photoList.setItemChecked(currAlbum.getPictureList().size() - 1, true);*/
                 }
             }
         }
     }
 
     public void copyBtn(View view){
+        if (allAlbums.size() <= 1) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);builder.setTitle("Oops! There was an error...");
+            builder.setMessage("There are no other albums to copy to.");
+            builder.setPositiveButton("OK", null);
+            builder.show();
+            return;
+        }
+
         CharSequence[] albumsPossible = new CharSequence[allAlbums.size()-1];
 
         int value = 0;
@@ -198,7 +260,7 @@ public class AlbumActivity extends AppCompatActivity {
             }
         }
 
-        PhotoAdaptor adaptor = (PhotoAdaptor) photoList.getAdapter();
+        //PhotoAdaptor adaptor = (PhotoAdaptor) photoList.getAdapter();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final String[] moveToAlbum = {albumsPossible[0].toString()};
 
@@ -213,13 +275,14 @@ public class AlbumActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int item) {
-                        Photo photo = adaptor.getItem(photoList.getCheckedItemPosition());
+                        //Photo photo = adaptor.getItem(photoList.getCheckedItemPosition());
                         for(int i=0; i< allAlbums.size(); i++){
                             if(allAlbums.get(i).getTitle().equals(moveToAlbum[0])){
-                                for(int j=0; j<allAlbums.get(i).getPictureList().size(); j++){
-                                    if(photo.getBitmap().sameAs(allAlbums.get(i).getPictureList().get(j).getBitmap())){
+                                Album newAlbum = allAlbums.get(i);
+                                for(int j=0; j<newAlbum.getPictureList().size(); j++){
+                                    if(currPhoto.getPath().equals(newAlbum.getPictureList().get(j).getPath())){
                                         builder.setTitle("Oops! There was an error...");
-                                        builder.setMessage(photo.getPhotoName() + " already exists in " + moveToAlbum[0]);
+                                        builder.setMessage("This photo already exists in " + moveToAlbum[0]);
                                         builder.setPositiveButton("OK", null);
                                         builder.show();
 
@@ -227,7 +290,7 @@ public class AlbumActivity extends AppCompatActivity {
                                     }
                                 }
 
-                                allAlbums.get(i).addPicture(photo);
+                                newAlbum.addPicture(currPhoto);
                                 saveData(allAlbums);
                             }
                         }
@@ -246,6 +309,14 @@ public class AlbumActivity extends AppCompatActivity {
     }
 
     public void moveBtn(View view){
+        if (allAlbums.size() <= 1) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);builder.setTitle("Oops! There was an error...");
+            builder.setMessage("There are no other albums to copy to.");
+            builder.setPositiveButton("OK", null);
+            builder.show();
+            return;
+        }
+
         CharSequence[] albumsPossible = new CharSequence[allAlbums.size()-1];
 
         int value = 0;
@@ -256,7 +327,7 @@ public class AlbumActivity extends AppCompatActivity {
             }
         }
 
-        PhotoAdaptor adaptor = (PhotoAdaptor) photoList.getAdapter();
+        //PhotoAdaptor adaptor = (PhotoAdaptor) photoList.getAdapter();
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final String[] moveToAlbum = {albumsPossible[0].toString()};
 
@@ -271,24 +342,29 @@ public class AlbumActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int item) {
-                        Photo photo = adaptor.getItem(photoList.getCheckedItemPosition());
+                        //Photo photo = adaptor.getItem(photoList.getCheckedItemPosition());
                         for(int i=0; i< allAlbums.size(); i++){
                             if(allAlbums.get(i).getTitle().equals(moveToAlbum[0])){
-                                for(int j=0; j<allAlbums.get(i).getPictureList().size(); j++){
-                                    if(photo.getBitmap().sameAs(allAlbums.get(i).getPictureList().get(j).getBitmap())){
+                                Album newAlbum = allAlbums.get(i);
+                                for(int j=0; j<newAlbum.getPictureList().size(); j++){
+                                    if(currPhoto.getPath().equals(newAlbum.getPictureList().get(j).getPath())){
                                         builder.setTitle("Oops! There was an error...");
-                                        builder.setMessage(photo.getPhotoName() + " already exists in " + moveToAlbum[0]);
+                                        builder.setMessage("This photo already exists in " + moveToAlbum[0]);
                                         builder.setPositiveButton("OK", null);
                                         builder.show();
 
                                         return;
                                     }
                                 }
-
-                                allAlbums.get(i).addPicture(photo);
-                                currAlbum.removePicture(photo);
-                                saveData(allAlbums);
-                                adaptor.remove(photo);
+                                //try {
+                                    newAlbum.addPicture(currPhoto);
+                                    currAlbum.removePicture(currPhoto);
+                                    updatePhotos(currAlbum);
+                                    saveData(allAlbums);
+                                /*}
+                                catch (Exception e) {
+                                    albumName.setText(e.toString());
+                                }*/
                             }
                         }
                     }
@@ -302,6 +378,17 @@ public class AlbumActivity extends AppCompatActivity {
                 });
         builder.show();
         return;
+    }
+
+    private void updatePhotos(Album album) {
+        if (album == null || (album.getPictureList() == null || album.getPictureList().size() == 0)) {
+            photoList.setAdapter(null);
+            return;
+        }
+        PhotoAdaptor adaptor = new PhotoAdaptor(this, R.layout.adaptor_view, album.getPictureList());
+        adaptor.setNotifyOnChange(true);
+        photoList = findViewById(R.id.photoList);
+        photoList.setAdapter(adaptor);
     }
 
     public void saveData(ArrayList<Album> albums) {

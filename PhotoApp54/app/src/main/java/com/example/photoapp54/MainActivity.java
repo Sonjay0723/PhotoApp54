@@ -21,19 +21,15 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ListView;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -66,6 +62,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         else {
+            /*baseFile.delete();
+            try {
+                baseFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }*/
             try {
                 FileInputStream fileInputStream = new FileInputStream(path);
                 ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
@@ -102,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         albumName.setText(("Album:"));
 
         Intent intent = getIntent();
-        if ((ArrayList<Album>) intent.getSerializableExtra("allAlbums") != null)
+        if (intent.getSerializableExtra("allAlbums") != null)
             allAlbums = (ArrayList<Album>) intent.getSerializableExtra("allAlbums");
 
         if (allAlbums != null && !allAlbums.isEmpty()) {
@@ -160,13 +162,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-        /*imageList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                imageList.setItemChecked(position, true);
-            }
-        });*/
     }
 
     @Override
@@ -303,10 +298,10 @@ public class MainActivity extends AppCompatActivity {
             imageList.setAdapter(null);
             return;
         }
-        PhotoAdaptor adapter = new PhotoAdaptor(this, R.layout.adaptor_view, album.getPictureList());
-        adapter.setNotifyOnChange(true);
-        imageList = findViewById(R.id.photoList);
-        imageList.setAdapter(adapter);
+        PhotoAdaptor adaptor = new PhotoAdaptor(this, R.layout.adaptor_view, album.getPictureList());
+        adaptor.setNotifyOnChange(true);
+        imageList = findViewById(R.id.picList);
+        imageList.setAdapter(adaptor);
     }
 
     private boolean openAlbum() {
@@ -367,6 +362,7 @@ public class MainActivity extends AppCompatActivity {
         else {
             albumList.setAdapter(null);
             imageList.setAdapter(null);
+            albumName.setText("Album:");
         }
 
         saveData(allAlbums);

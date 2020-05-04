@@ -1,7 +1,12 @@
 package com.example.photoapp54.model;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -18,7 +23,7 @@ public class Album implements Serializable {
      */
     private static final long serialVersionUID = -9155495546523356913L;
     public String title;
-    public ArrayList<Photo> pictureList = new ArrayList<Photo>();
+    public ArrayList<Photo> pictureList;// = new ArrayList<Photo>();
 
     /**
      * Initialize Album
@@ -27,6 +32,7 @@ public class Album implements Serializable {
      */
     public Album(String title) {
         this.title = title;
+        pictureList = new ArrayList<>();
     }
 
     /**
@@ -73,7 +79,7 @@ public class Album implements Serializable {
     public void addPicture(Photo newPicture) {
         if (this.pictureList.size() != 0) {
             for(int i=0; i<this.pictureList.size(); i++) {
-                if(this.getPicture(this.pictureList.get(i)).equals(newPicture.getBitmap()))
+                if(this.pictureList.get(i).getPath().equals(newPicture.getPath()))
                     return;
             }
         }
@@ -89,7 +95,7 @@ public class Album implements Serializable {
     public void removePicture(Photo thisPicture) {
         int position = 0;
         for(int i=0; i<pictureList.size(); i++) {
-            if(thisPicture.getBitmap().equals(pictureList.get(i).getBitmap())) {
+            if(thisPicture.getPath().equals(pictureList.get(i).getPath())) {
                 position = i;
                 break;
             }
@@ -97,23 +103,23 @@ public class Album implements Serializable {
         pictureList.remove(position);
     }
 
-    /**
+    /*
      * Get the picture
      *
      * @param thisPhoto the picture to find
      *
      * @return the Picture
      */
-    public Bitmap getPicture(Photo thisPhoto) {
+    /*public Bitmap getPicture(Photo thisPhoto) {
         Bitmap searchFor = null;
         for(int i=0; i<this.pictureList.size(); i++) {
-            if(this.pictureList.get(i).getBitmap().equals(thisPhoto.getBitmap())) {
-                searchFor = this.pictureList.get(i).getBitmap();
+            if(this.pictureList.get(i).getImage().sameAs(thisPhoto.getImage())) {
+                searchFor = this.pictureList.get(i).getImage();
                 break;
             }
         }
         return searchFor;
-    }
+    }*/
 
     @Override
     public boolean equals(Object other) {
@@ -152,4 +158,13 @@ public class Album implements Serializable {
         ret += "\n"+Integer.toString(this.pictureList.size())+" Photos";
         return ret;
     }
+
+    /*private void writeObject(ObjectOutputStream out) throws IOException {
+        out.writeObject(this);
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.readObject();
+    }*/
+
 }
