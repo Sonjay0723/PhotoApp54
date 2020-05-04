@@ -130,7 +130,7 @@ public class SearchPage extends AppCompatActivity {
     private ArrayList<Photo> tagCheck(ArrayList<Album> albums, String pTag, String lTag) {
         ArrayList<Photo> resList = new ArrayList<>();
         for (int i = 0; i < albums.size(); i++) {
-            Album currAlbum = albums.get(i);
+            Album currentAlbum = albums.get(i);
 
             if (radAnd.isChecked()) {
                 boolean pFound = false;
@@ -138,11 +138,11 @@ public class SearchPage extends AppCompatActivity {
                 Tag pTagTemp = new Tag("person", pTag, false);
                 Tag lTagTemp = new Tag("location", lTag, false);
 
-                for (int j = 0; j < currAlbum.getPictureList().size(); j++) {
-                    Photo currPhoto = currAlbum.getPictureList().get(i);
+                for (int j = 0; j < currentAlbum.getPictureList().size(); j++) {
+                    Photo currentPhoto = currentAlbum.getPictureList().get(j);
 
-                    for (int k = 0; k < currPhoto.getTags().size(); k++) {
-                        Tag currTagTemp = currPhoto.getTags().get(k);
+                    for (int k = 0; k < currentPhoto.getTags().size(); k++) {
+                        Tag currTagTemp = currentPhoto.getTags().get(k);
                         if (currTagTemp.getName().toLowerCase().equals("person") && currTagTemp.getValue().length() > pTag.length()) {
                             currTagTemp = new Tag("person", currTagTemp.getValue().substring(0, pTag.length()), false);
                         }
@@ -155,8 +155,8 @@ public class SearchPage extends AppCompatActivity {
                         if (currTagTemp.equals(lTagTemp))
                             lFound = true;
 
-                        if (pFound && lFound) {
-                            resList.add(currPhoto);
+                        if ((pFound && lFound) && !listContains(resList, currentPhoto)) {
+                            resList.add(currentPhoto);
                             break;
                         }
                     }
@@ -167,10 +167,10 @@ public class SearchPage extends AppCompatActivity {
                 Tag lTagTemp = new Tag("location", lTag, false);
 
                 for (int j = 0; j < currAlbum.getPictureList().size(); j++) {
-                    Photo currPhoto = currAlbum.getPictureList().get(i);
+                    Photo currentPhoto = currAlbum.getPictureList().get(j);
 
-                    for (int k = 0; k < currPhoto.getTags().size(); k++) {
-                        Tag currTagTemp = currPhoto.getTags().get(k);
+                    for (int k = 0; k < currentPhoto.getTags().size(); k++) {
+                        Tag currTagTemp = currentPhoto.getTags().get(k);
                         if (currTagTemp.getName().toLowerCase().equals("person") && currTagTemp.getValue().length() > pTag.length()) {
                             currTagTemp = new Tag("person", currTagTemp.getValue().substring(0, pTag.length()), false);
                         }
@@ -178,8 +178,8 @@ public class SearchPage extends AppCompatActivity {
                             currTagTemp = new Tag("location", currTagTemp.getValue().substring(0, lTag.length()), false);
                         }
 
-                        if (currTagTemp.equals(pTagTemp) || currTagTemp.equals(lTagTemp)) {
-                            resList.add(currPhoto);
+                        if ((currTagTemp.equals(pTagTemp) || currTagTemp.equals(lTagTemp)) && !listContains(resList, currentPhoto)) {
+                            resList.add(currentPhoto);
                             break;
                         }
                     }
@@ -193,10 +193,10 @@ public class SearchPage extends AppCompatActivity {
                     temp = new Tag("person", pTag, false);
 
                 for (int j = 0; j < currAlbum.getPictureList().size(); j++) {
-                    Photo currPhoto = currAlbum.getPictureList().get(i);
+                    Photo currentPhoto = currAlbum.getPictureList().get(j);
 
-                    for (int k = 0; k < currPhoto.getTags().size(); k++) {
-                        Tag currTagTemp = currPhoto.getTags().get(k);
+                    for (int k = 0; k < currentPhoto.getTags().size(); k++) {
+                        Tag currTagTemp = currentPhoto.getTags().get(k);
                         if (currTagTemp.getName().toLowerCase().equals("person") && currTagTemp.getValue().length() > pTag.length()) {
                             currTagTemp = new Tag("person", currTagTemp.getValue().substring(0, pTag.length()), false);
                         }
@@ -204,8 +204,8 @@ public class SearchPage extends AppCompatActivity {
                             currTagTemp = new Tag("location", currTagTemp.getValue().substring(0, lTag.length()), false);
                         }
 
-                        if (currTagTemp.equals(temp)) {
-                            resList.add(currPhoto);
+                        if (currTagTemp.equals(temp) && !listContains(resList, currentPhoto)) {
+                            resList.add(currentPhoto);
                             break;
                         }
                     }
@@ -216,6 +216,14 @@ public class SearchPage extends AppCompatActivity {
         return resList;
     }
 
+    private boolean listContains(ArrayList<Photo> picList, Photo currPhoto) {
+        for (int i = 0; i < picList.size(); i++) {
+            if (picList.get(i).getPath().equals(currPhoto.getPath()))
+                return true;
+        }
+
+        return false;
+    }
     public void reset(View view) {
         personTag.getEditText().setText("");
         locationTag.getEditText().setText("");

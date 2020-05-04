@@ -57,7 +57,7 @@ public class DisplayActivity extends AppCompatActivity {
         imageView = findViewById(R.id.imageView);
         imageView.setImageURI(Uri.parse(photo.getPath()));
         ArrayList<String> temp = new ArrayList<>();
-        for (int i = 0; i < allAlbums.size(); i++) {
+        /*for (int i = 0; i < allAlbums.size(); i++) {
             temp.add("Album: " + allAlbums.get(i).getTitle());
         }
         temp.add("currAlbumPos: " + currAlbumPos);
@@ -67,12 +67,12 @@ public class DisplayActivity extends AppCompatActivity {
         ArrayAdapter<String> adaptor = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, temp);
         adaptor.setNotifyOnChange(true);
         tagList = findViewById(R.id.tagList);
-        tagList.setAdapter(adaptor);
+        tagList.setAdapter(adaptor);*/
 
         /*ArrayAdapter<Tag> adapter = new ArrayAdapter<>(this, R.layout.arrayadaptor_view, photo.getTags());
         adapter.setNotifyOnChange(true);*/
 
-        /*if(!photo.getTags().isEmpty()) {
+        if(!photo.getTags().isEmpty()) {
             updateTags(photo);
             tagList.setItemChecked(0, true);
             currTag = photo.getTags().get(0);
@@ -86,7 +86,7 @@ public class DisplayActivity extends AppCompatActivity {
         else {
             tagList.setAdapter(null);
             typeGroup.check(R.id.personType);
-        }*/
+        }
 
         tagList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -115,15 +115,15 @@ public class DisplayActivity extends AppCompatActivity {
 
     public void nextImg(View view){
         if(currPhotoPos+1 >= currAlbum.getPictureList().size()){
-            imageView.setImageURI(Uri.parse(currAlbum.getPictureList().get(0).getPath()));
             currPhotoPos=0;
+            imageView.setImageURI(Uri.parse(currAlbum.getPictureList().get(currPhotoPos).getPath()));
         }
         else{
-            imageView.setImageURI(Uri.parse(currAlbum.getPictureList().get(currPhotoPos+1).getPath()));
             currPhotoPos++;
+            imageView.setImageURI(Uri.parse(currAlbum.getPictureList().get(currPhotoPos).getPath()));
         }
 
-        photo = currAlbum.getPictureList().get(currPhotoPos);
+        photo = allAlbums.get(currAlbumPos).getPictureList().get(currPhotoPos);
 
         /*ArrayAdapter<Tag> adapter = new ArrayAdapter<>(this, R.layout.arrayadaptor_view, photo.getTags());
         adapter.setNotifyOnChange(true);
@@ -156,19 +156,32 @@ public class DisplayActivity extends AppCompatActivity {
                 tagValue.setText(currTag.getValue());
             }
         });*/
+
+        /*ArrayList<String> temp = new ArrayList<>();
+        for (int i = 0; i < allAlbums.size(); i++) {
+            temp.add("Album: " + allAlbums.get(i).getTitle());
+        }
+        temp.add("currAlbumPos: " + currAlbumPos);
+        temp.add("Curr Album: " + currAlbum.getTitle());
+        temp.add("currPhotoPos: " + currPhotoPos);
+        temp.add("currPhoto: " + photo.getPhotoName());
+        ArrayAdapter<String> adaptor = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, temp);
+        adaptor.setNotifyOnChange(true);
+        tagList = findViewById(R.id.tagList);
+        tagList.setAdapter(adaptor);*/
     }
 
     public void previousImg(View view){
         if(currPhotoPos-1 <0){
-            imageView.setImageURI(Uri.parse(currAlbum.getPictureList().get(currAlbum.getPictureList().size()-1).getPath()));
             currPhotoPos=currAlbum.getPictureList().size()-1;
+            imageView.setImageURI(Uri.parse(currAlbum.getPictureList().get(currPhotoPos).getPath()));
         }
         else{
-            imageView.setImageURI(Uri.parse(currAlbum.getPictureList().get(currAlbumPos-1).getPath()));
             currPhotoPos--;
+            imageView.setImageURI(Uri.parse(currAlbum.getPictureList().get(currPhotoPos).getPath()));
         }
 
-        photo = currAlbum.getPictureList().get(currPhotoPos);
+        photo = allAlbums.get(currAlbumPos).getPictureList().get(currPhotoPos);
 
         /*ArrayAdapter<Tag> adapter = new ArrayAdapter<>(this, R.layout.arrayadaptor_view, currPhoto.getTags());
         adapter.setNotifyOnChange(true);
@@ -201,6 +214,19 @@ public class DisplayActivity extends AppCompatActivity {
                 tagValue.setText(currTag.getValue());
             }
         });*/
+        /*ArrayList<String> temp = new ArrayList<>();
+        for (int i = 0; i < allAlbums.size(); i++) {
+            temp.add("Album: " + allAlbums.get(i).getTitle());
+        }
+        temp.add("currAlbumPos: " + currAlbumPos);
+        temp.add("Curr Album: " + currAlbum.getTitle());
+        temp.add("currPhotoPos: " + currPhotoPos);
+        temp.add("currPhoto: " + photo.getPhotoName());
+        ArrayAdapter<String> adaptor = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, temp);
+        adaptor.setNotifyOnChange(true);
+        tagList = findViewById(R.id.tagList);
+        tagList.setAdapter(adaptor);*/
+
     }
 
     public void addTag(View view){
@@ -254,7 +280,8 @@ public class DisplayActivity extends AppCompatActivity {
             new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    photo.addTag(newTag);
+                    allAlbums.get(currAlbumPos).getPictureList().get(currPhotoPos).addTag(newTag);
+                    photo = allAlbums.get(currAlbumPos).getPictureList().get(currPhotoPos);
                     currTag = newTag;
                     saveData(allAlbums);
                     updateTags(photo);
@@ -272,6 +299,7 @@ public class DisplayActivity extends AppCompatActivity {
 
         typeGroup.clearCheck();
         typeGroup.check(R.id.personType);
+        tagValue.getEditText().setText("");
         return;
     }
 
@@ -293,7 +321,8 @@ public class DisplayActivity extends AppCompatActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        photo.removeTag(currTag.getName(), currTag.getValue());
+                        allAlbums.get(currAlbumPos).getPictureList().get(currPhotoPos).removeTag(currTag.getName(), currTag.getValue());
+                        photo = allAlbums.get(currAlbumPos).getPictureList().get(currPhotoPos);
                         saveData(allAlbums);
                         updateTags(photo);
                         if(!photo.getTags().isEmpty()) {
@@ -324,19 +353,20 @@ public class DisplayActivity extends AppCompatActivity {
 
     }
 
-    private void updateTags(Photo photo) {
-        if (photo == null || photo.getTags().size() == 0) {
+    private void updateTags(Photo image) {
+        if (image == null || image.getTags().size() == 0) {
             tagList.setAdapter(null);
             return;
         }
         ArrayList<String> strTags = new ArrayList<>();
-        for (int i = 0; i < photo.getTags().size(); i++)
-            strTags.add(photo.getTags().get(i).toString());
+        for (int i = 0; i < image.getTags().size(); i++)
+            strTags.add(image.getTags().get(i).toString());
 
         ArrayAdapter<String> adaptor = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, strTags);
         adaptor.setNotifyOnChange(true);
         tagList = findViewById(R.id.tagList);
         tagList.setAdapter(adaptor);
+        tagList.refreshDrawableState();
     }
 
     public void saveData(ArrayList<Album> albums) {
@@ -348,6 +378,19 @@ public class DisplayActivity extends AppCompatActivity {
 
             objectOutputStream.close();
             fileOutputStream.close();
+            /*ArrayList<String> temp = new ArrayList<>();
+            temp.add("test");
+            for (int i = 0; i < albums.size(); i++) {
+                for (int j = 0; j < albums.get(i).getPictureList().size(); j++) {
+                    for (int k = 0; k < albums.get(i).getPictureList().get(j).getTags().size(); k++) {
+                        temp.add(albums.get(i).getPictureList().get(j).getTags().get(k).toString());
+                    }
+                }
+            }
+            ArrayAdapter<String> adaptor = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, temp);
+            adaptor.setNotifyOnChange(true);
+            tagList = findViewById(R.id.tagList);
+            tagList.setAdapter(adaptor);*/
         } catch (Exception exception) {
             exception.printStackTrace();
         }
