@@ -64,6 +64,7 @@ public class SearchPage extends AppCompatActivity {
 
         currAlbumPos = intent.getIntExtra("currAlbumPos", 0);
         currAlbum = allAlbums.get(currAlbumPos);
+        //personTag.getEditText().setText("" + allAlbums.size());
     }
 
     public void search(View view) {
@@ -97,7 +98,7 @@ public class SearchPage extends AppCompatActivity {
                 personTag.setError(null);
                 locationTag.setError(null);
                 imageView.removeAllViewsInLayout();
-                resList = tagCheck(allAlbums, strPerson, strLocation);
+                resList = tagCheck(strPerson, strLocation);
             }
         }
         else {
@@ -115,7 +116,7 @@ public class SearchPage extends AppCompatActivity {
                 personTag.setError(null);
                 locationTag.setError(null);
                 imageView.removeAllViewsInLayout();
-                resList = tagCheck(allAlbums, strPerson, strLocation);
+                resList = tagCheck(strPerson, strLocation);
             }
         }
 
@@ -125,12 +126,15 @@ public class SearchPage extends AppCompatActivity {
             PhotoAdaptor photoAdaptor = new PhotoAdaptor(this, R.layout.adaptor_view , resList);
             imageView.setAdapter(photoAdaptor);
         }
+
+        //personTag.getEditText().setText("size-" + resList.size());
+        //locationTag.getEditText().setText("Loc-" + strLocation);
     }
 
-    private ArrayList<Photo> tagCheck(ArrayList<Album> albums, String pTag, String lTag) {
+    private ArrayList<Photo> tagCheck(String pTag, String lTag) {
         ArrayList<Photo> resList = new ArrayList<>();
-        for (int i = 0; i < albums.size(); i++) {
-            Album currentAlbum = albums.get(i);
+        for (int i = 0; i < allAlbums.size(); i++) {
+            Album currentAlbum = allAlbums.get(i);
 
             if (radAnd.isChecked()) {
                 boolean pFound = false;
@@ -166,8 +170,8 @@ public class SearchPage extends AppCompatActivity {
                 Tag pTagTemp = new Tag("person", pTag, false);
                 Tag lTagTemp = new Tag("location", lTag, false);
 
-                for (int j = 0; j < currAlbum.getPictureList().size(); j++) {
-                    Photo currentPhoto = currAlbum.getPictureList().get(j);
+                for (int j = 0; j < currentAlbum.getPictureList().size(); j++) {
+                    Photo currentPhoto = currentAlbum.getPictureList().get(j);
 
                     for (int k = 0; k < currentPhoto.getTags().size(); k++) {
                         Tag currTagTemp = currentPhoto.getTags().get(k);
@@ -192,8 +196,8 @@ public class SearchPage extends AppCompatActivity {
                 else
                     temp = new Tag("person", pTag, false);
 
-                for (int j = 0; j < currAlbum.getPictureList().size(); j++) {
-                    Photo currentPhoto = currAlbum.getPictureList().get(j);
+                for (int j = 0; j < currentAlbum.getPictureList().size(); j++) {
+                    Photo currentPhoto = currentAlbum.getPictureList().get(j);
 
                     for (int k = 0; k < currentPhoto.getTags().size(); k++) {
                         Tag currTagTemp = currentPhoto.getTags().get(k);

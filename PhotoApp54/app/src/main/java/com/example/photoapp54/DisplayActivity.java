@@ -23,6 +23,7 @@ public class DisplayActivity extends AppCompatActivity {
 
     private ImageView imageView;
     private ListView tagList;
+    private TextView textView;
     private RadioGroup typeGroup;
     private RadioButton personType;
     private RadioButton locationType;
@@ -54,6 +55,8 @@ public class DisplayActivity extends AppCompatActivity {
         locationType = findViewById(R.id.locationType);
         tagValue = findViewById(R.id.tagValue);
         tagList = findViewById(R.id.tagList);
+        textView = findViewById(R.id.textView);
+        textView.setText((currAlbum.getTitle() + " images"));
         imageView = findViewById(R.id.imageView);
         imageView.setImageURI(Uri.parse(photo.getPath()));
         ArrayList<String> temp = new ArrayList<>();
@@ -378,19 +381,6 @@ public class DisplayActivity extends AppCompatActivity {
 
             objectOutputStream.close();
             fileOutputStream.close();
-            /*ArrayList<String> temp = new ArrayList<>();
-            temp.add("test");
-            for (int i = 0; i < albums.size(); i++) {
-                for (int j = 0; j < albums.get(i).getPictureList().size(); j++) {
-                    for (int k = 0; k < albums.get(i).getPictureList().get(j).getTags().size(); k++) {
-                        temp.add(albums.get(i).getPictureList().get(j).getTags().get(k).toString());
-                    }
-                }
-            }
-            ArrayAdapter<String> adaptor = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, temp);
-            adaptor.setNotifyOnChange(true);
-            tagList = findViewById(R.id.tagList);
-            tagList.setAdapter(adaptor);*/
         } catch (Exception exception) {
             exception.printStackTrace();
         }

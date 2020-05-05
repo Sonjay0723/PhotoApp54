@@ -195,17 +195,9 @@ public class AlbumActivity extends AppCompatActivity {
 
                 if(bitmap!=null) {
                     String name = uri.toString();
-                    albumName.setTextSize(12);
-                    albumName.setText(name);
-                    File f = new File(name);
-                    if (f.exists())
-                        albumName.setText(name + " yes");
-                    else
-                        albumName.setText(name + " no");
                     Photo photo = new Photo(name);
-                    try {
+                    //try {
                         //PhotoAdaptor adapter = (PhotoAdaptor) photoList.getAdapter();
-
                         for (int i = 0; i < currAlbum.getPictureList().size(); i++) {
                             if (photo.getPath().equals(currAlbum.getPictureList().get(i).getPath())) {
                                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -226,11 +218,11 @@ public class AlbumActivity extends AppCompatActivity {
                         photoList.refreshDrawableState();
                         saveData(allAlbums);
                         //photoList.setAdapter(adapter);
-                    }
+                    /*}
                     catch (Exception e) {
                         albumName.setTextSize(12);
                         albumName.setText(e.toString());
-                    }
+                    }*/
                     /*currAlbum.addPicture(photo);
                     saveData(allAlbums);
                     adapter = new PhotoAdaptor(this, R.layout.adaptor_view, currAlbum.getPictureList());
@@ -246,6 +238,14 @@ public class AlbumActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);builder.setTitle("Oops! There was an error...");
             builder.setMessage("There are no other albums to copy to.");
             builder.setPositiveButton("OK", null);
+            builder.show();
+            return;
+        }
+        if (currAlbum.getPictureList().size() == 0) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Oops! There was an error...");
+            builder.setMessage("There are no Images to copy!");
+            builder.setPositiveButton("Close", null);
             builder.show();
             return;
         }
@@ -313,6 +313,14 @@ public class AlbumActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);builder.setTitle("Oops! There was an error...");
             builder.setMessage("There are no other albums to copy to.");
             builder.setPositiveButton("OK", null);
+            builder.show();
+            return;
+        }
+        if (currAlbum.getPictureList().size() == 0) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Oops! There was an error...");
+            builder.setMessage("There are no Images to move!");
+            builder.setPositiveButton("Close", null);
             builder.show();
             return;
         }
