@@ -5,14 +5,10 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.text.Editable;
-import android.view.autofill.AutofillValue;
-import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.RadioGroup;
 import android.widget.Button;
 import android.widget.RadioButton;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.photoapp54.model.*;
 
@@ -33,20 +29,12 @@ public class SearchPage extends AppCompatActivity {
     private ArrayList<Album> allAlbums;
     private Album currAlbum;
     private int currAlbumPos;
-    //public String path;
-
-    public View onCreateView(
-            LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState
-    ) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.search, container, false);
-    }
+    public String path;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search);
-        //path = this.getApplicationInfo().dataDir + "/data.dat";
+        path = this.getApplicationInfo().dataDir + "/data.dat";
         andOr = findViewById(R.id.grp2Tag);
         personTag = findViewById(R.id.txtPersonTag);
         locationTag = findViewById(R.id.txtLocationTag);
@@ -64,7 +52,6 @@ public class SearchPage extends AppCompatActivity {
 
         currAlbumPos = intent.getIntExtra("currAlbumPos", 0);
         currAlbum = allAlbums.get(currAlbumPos);
-        //personTag.getEditText().setText("" + allAlbums.size());
     }
 
     public void search(View view) {
@@ -126,9 +113,6 @@ public class SearchPage extends AppCompatActivity {
             PhotoAdaptor photoAdaptor = new PhotoAdaptor(this, R.layout.adaptor_view , resList);
             imageView.setAdapter(photoAdaptor);
         }
-
-        //personTag.getEditText().setText("size-" + resList.size());
-        //locationTag.getEditText().setText("Loc-" + strLocation);
     }
 
     private ArrayList<Photo> tagCheck(String pTag, String lTag) {
@@ -137,12 +121,12 @@ public class SearchPage extends AppCompatActivity {
             Album currentAlbum = allAlbums.get(i);
 
             if (radAnd.isChecked()) {
-                boolean pFound = false;
-                boolean lFound = false;
                 Tag pTagTemp = new Tag("person", pTag, false);
                 Tag lTagTemp = new Tag("location", lTag, false);
 
                 for (int j = 0; j < currentAlbum.getPictureList().size(); j++) {
+                    boolean pFound = false;
+                    boolean lFound = false;
                     Photo currentPhoto = currentAlbum.getPictureList().get(j);
 
                     for (int k = 0; k < currentPhoto.getTags().size(); k++) {
@@ -228,6 +212,7 @@ public class SearchPage extends AppCompatActivity {
 
         return false;
     }
+
     public void reset(View view) {
         personTag.getEditText().setText("");
         locationTag.getEditText().setText("");

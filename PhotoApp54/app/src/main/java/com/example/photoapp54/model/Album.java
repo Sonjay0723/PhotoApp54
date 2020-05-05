@@ -1,18 +1,7 @@
 package com.example.photoapp54.model;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.Objects;
 
 public class Album implements Serializable {
@@ -103,24 +92,6 @@ public class Album implements Serializable {
         pictureList.remove(position);
     }
 
-    /*
-     * Get the picture
-     *
-     * @param thisPhoto the picture to find
-     *
-     * @return the Picture
-     */
-    /*public Bitmap getPicture(Photo thisPhoto) {
-        Bitmap searchFor = null;
-        for(int i=0; i<this.pictureList.size(); i++) {
-            if(this.pictureList.get(i).getImage().sameAs(thisPhoto.getImage())) {
-                searchFor = this.pictureList.get(i).getImage();
-                break;
-            }
-        }
-        return searchFor;
-    }*/
-
     @Override
     public boolean equals(Object other) {
         if(other==null || !(other instanceof Album))
@@ -136,17 +107,6 @@ public class Album implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(title);
-    }
-
-    /**
-     * compareTo Method for album compares titles (in lower case)
-     *
-     * @param currAlbum Current album to compare
-     *
-     * @return 0 if equal, any number greater/less than 0 otherwise depending on order of album title's
-     */
-    public int compareTo(Album currAlbum) {
-        return this.getTitle().toLowerCase().compareTo(currAlbum.getTitle().toLowerCase());
     }
 
     /**

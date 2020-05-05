@@ -62,12 +62,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         else {
-            /*baseFile.delete();
-            try {
-                baseFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }*/
             try {
                 FileInputStream fileInputStream = new FileInputStream(path);
                 ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
@@ -125,11 +119,6 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-
-                /*NavHostFragment.findNavController(MainActivity.this)
-                        .navigate(R.id.action_FirstFragment_to_SecondFragment);*/
                 Intent intent = new Intent(getApplicationContext(), SearchPage.class);
                 if (allAlbums != null && !allAlbums.isEmpty()) {
                     intent.putExtra("allAlbums", allAlbums);

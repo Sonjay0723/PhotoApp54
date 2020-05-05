@@ -35,22 +35,16 @@ public class PhotoAdaptor extends ArrayAdapter<Photo> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        // ViewHolder holder = null;
-
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 
         if (convertView == null) {
             //this is if it is on the display section
             convertView = inflater.inflate(R.layout.adaptor_view, null);
-            //holder = new ViewHolder();
-            //holder.photo = (ImageView) convertView.findViewById(R.id.imageDisplay);
-            //convertView.setTag(holder);
         }
 
         ImageView toEnter = (ImageView) convertView.findViewById(R.id.imageDisplay);
 
         Photo photo = (Photo) items.get(position);
-        //toEnter.setImageBitmap(photo.getImage());
         toEnter.setImageURI(Uri.parse(photo.getPath()));
         return convertView;
     }
